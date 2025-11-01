@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BookShop — Nâng cấp</title>
+    <link rel="stylesheet" href="ShopUser.css" />
+  </head>
+  <body>
+    <header>
+      <h1>📖 BookShop</h1>
+      <div id="user-info-widget" class="user-widget">
+        <button onclick="switchPage('page-dang-ky')">Đăng ký</button>
+        <button onclick="switchPage('page-dang-nhap')">Đăng nhập</button>
+      </div>
+    </header>
+
+    <nav>
+      <a onclick="switchPage('page-danh-sach-sp')">Sản Phẩm</a>
+      <a onclick="switchPage('page-gio-hang')">Giỏ Hàng</a>
+      <a onclick="switchPage('page-don-hang')">Đơn Hàng</a>
+      <a
+        onclick="switchPage('page-quan-ly-ca-nhan')"
+        id="nav-ql-ca-nhan"
+        style="display: none"
+        >Hồ Sơ</a
+      >
+      <div
+        style="margin-left: auto; display: flex; gap: 8px; align-items: center"
+      >
+        <button id="btn-export">Xuất dữ liệu</button>
+        <label class="import-label">
+          Nhập dữ liệu
+          <input
+            id="import-file"
+            type="file"
+            accept="application/json"
+            style="display: none"
+          />
+        </label>
+      </div>
+    </nav>
+
+    <main class="content">
+      <!-- Đăng ký -->
+      <section id="page-dang-ky" class="page-content">
+        <div class="form-container">
+          <h2>Đăng Ký 📝</h2>
+          <input
+            type="text"
+            id="reg-username"
+            placeholder="Tên đăng nhập"
+            required
+          />
+          <input
+            type="password"
+            id="reg-password"
+            placeholder="Mật khẩu (≥6 ký tự)"
+            required
+          />
+          <input
+            type="password"
+            id="reg-password-confirm"
+            placeholder="Xác nhận mật khẩu"
+            required
+          />
+          <input
+            type="text"
+            id="reg-fullname"
+            placeholder="Họ và Tên"
+            required
+          />
+          <input
+            type="tel"
+            id="reg-phone"
+            placeholder="Số điện thoại"
+            required
+          />
+          <input type="email" id="reg-email" placeholder="Email" required />
+          <input type="date" id="reg-dob" placeholder="Ngày sinh" required />
+          <button type="button" id="btn-register">Đăng Ký</button>
+          <p style="font-size: 0.9em">
+            Đã có tài khoản?
+            <a href="#" onclick="switchPage('page-dang-nhap')">Đăng nhập</a>
+          </p>
+        </div>
+      </section>
+
+      <!-- Đăng nhập -->
+      <section id="page-dang-nhap" class="page-content">
+        <div class="form-container">
+          <h2>Đăng Nhập 🔑</h2>
+          <input
+            type="text"
+            id="login-username"
+            placeholder="Tên đăng nhập hoặc Email"
+            required
+          />
+          <input
+            type="password"
+            id="login-password"
+            placeholder="Mật khẩu"
+            required
+          />
+          <button type="button" id="btn-login">Đăng Nhập</button>
+          <p style="font-size: 0.9em">
+            Chưa có tài khoản?
+            <a href="#" onclick="switchPage('page-dang-ky')">Đăng ký</a>
+          </p>
+        </div>
+      </section>
+
+      <!-- Quản lý hồ sơ -->
+      <section id="page-quan-ly-ca-nhan" class="page-content">
+        <h2>👤 Quản Lý Hồ Sơ</h2>
+        <div class="form-container" style="max-width: 600px">
+          <input type="text" id="tt_ho_ten" placeholder="Họ và Tên" required />
+          <input type="email" id="tt_email" placeholder="Email" required />
+          <input
+            type="tel"
+            id="tt_phone"
+            placeholder="Số điện thoại"
+            required
+          />
+          <input type="date" id="tt_dob" placeholder="Ngày sinh" required />
+          <button type="button" id="btn-update-profile">Cập Nhật</button>
+        </div>
+      </section>
+
+      <!-- Danh sách sản phẩm -->
+      <section id="page-danh-sach-sp" class="page-content">
+        <h2>📚 Sách Hiện Có</h2>
+
+        <div class="filter-panel">
+          <input type="text" id="search-name" placeholder="Tìm theo tên sách" />
+          <select id="filter-category">
+            <option value="">-- Tất cả Phân loại --</option>
+          </select>
+          <input
+            type="number"
+            id="filter-min-price"
+            placeholder="Giá từ (VNĐ)"
+          />
+          <input
+            type="number"
+            id="filter-max-price"
+            placeholder="Giá đến (VNĐ)"
+          />
+          <button type="button" id="btn-apply-filters">Tìm Kiếm</button>
+        </div>
+
+        <div class="product-grid" id="product-list"></div>
+        <div id="pagination-controls" class="pagination-controls"></div>
+      </section>
+
+      <!-- Modal chi tiết sản phẩm -->
+      <div id="modal" class="modal" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true">
+          <button class="modal-close" id="modal-close">&times;</button>
+          <div id="modal-body"></div>
+        </div>
+      </div>
+
+      <!-- Giỏ hàng -->
+      <section id="page-gio-hang" class="page-content">
+        <h2>🧺 Giỏ Hàng</h2>
+        <div id="cart-items"></div>
+        <p>Tổng: <strong id="total-price">0đ</strong></p>
+
+        <div class="form-container" style="max-width: 700px">
+          <h3>Thông tin giao hàng</h3>
+          <input type="text" id="ship-name" placeholder="Tên người nhận" />
+          <input
+            type="text"
+            id="ship-address"
+            placeholder="Địa chỉ giao hàng"
+          />
+          <input type="tel" id="ship-phone" placeholder="Số điện thoại" />
+          <div style="text-align: left; margin-top: 10px">
+            <label
+              ><input type="radio" name="payment" value="cod" checked /> Thanh
+              toán khi nhận hàng</label
+            ><br />
+            <label
+              ><input type="radio" name="payment" value="card" /> Thẻ/Tài
+              khoản</label
+            >
+          </div>
+          <button type="button" id="btn-checkout">Thanh Toán</button>
+        </div>
+      </section>
+
+      <!-- Đơn hàng -->
+      <section id="page-don-hang" class="page-content">
+        <h2>📦 Đơn Hàng của bạn</h2>
+        <div id="order-list"></div>
+      </section>
+    </main>
+
+    <!-- Toast container -->
+    <div id="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="ShopUser.js"></script>
+  </body>
+</html>
